@@ -8,6 +8,8 @@ if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
 
+& .\vmt\vmt.exe .\vmt\program.asm
+
 #y ejecuta el programa compilado
-& .\versions\MV.exe
+& .\versions\MV.exe hola.vmx
 exit $LASTEXITCODE
