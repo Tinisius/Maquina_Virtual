@@ -26,7 +26,7 @@ typedef struct
     void (*operation)(int, int);
 } operatorASM;
 
-void readHeader(char route[], uint16_t *tamano_codigo, int *res)
+void readHeader(char route[], uint16_t *code_size, int *res)
 {
     uint8_t line[N_HEADER];
     FILE *arch = fopen(route, "rb");
@@ -36,14 +36,14 @@ void readHeader(char route[], uint16_t *tamano_codigo, int *res)
         // Bytes 0-4: identificador "VMX26"
         // Byte 5: version
         // Bytes 6-7: tamano codigo
-        *tamano_codigo = ((uint16_t)line[6] << 8) | line[7];
+        *code_size = ((uint16_t)line[6] << 8) | line[7];
         //uso memcmp porque line no es una cadena terminada en \0. comparo byte a byte contra ID
-        *res = (memcmp(line, ID, 5) == 0) && (line[5] == VERSION) && ((*tamano_codigo) <= N_MEM - 1);
+        *res = (memcmp(line, ID, 5) == 0) && (line[5] == VERSION) && ((*code_size) <= N_MEM - 1);
 
          // TEST: mostrar lectura
         printf("IDENTIFICADOR: \"%.5s\"\n", line);
         printf("VERSION: %d\n", line[5]);
-        printf("TAMANO EN BYTES: %u\n", *tamano_codigo);
+        printf("TAMANO EN BYTES: %u\n", *code_size);
         
     }
     else
@@ -56,9 +56,9 @@ int main(int argc, char *argv[])
     printf("%d \n", argc);
     printf("args: %s\n", *(argv + 1));
     
-    uint16_t tam_cod;
+    uint16_t code_size;
     int res = 0;
-    readHeader(*(argv + 1), &tam_cod, &res);
+    readHeader(*(argv + 1), &code_size, &res);
 
     // reg registers[N_REG];
     // int segments[N_SEG];
