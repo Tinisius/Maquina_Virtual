@@ -16,17 +16,17 @@
 typedef struct
 {
     char *name;
-    int value;
+    int32_t value;
 } reg;
 
 typedef struct
 {
     char *name;
-    short int code;
-    void (*operation)(int, int);
+    int16_t code;
+    void (*operation)(int32_t, int32_t);
 } operatorASM;
 
-void readHeader(char route[], uint16_t *code_size, int *res)
+void readHeader(char route[], uint16_t *code_size, int8_t *res)
 {
     uint8_t line[N_HEADER];
     FILE *arch = fopen(route, "rb");
@@ -37,14 +37,13 @@ void readHeader(char route[], uint16_t *code_size, int *res)
         // Byte 5: version
         // Bytes 6-7: tamano codigo
         *code_size = ((uint16_t)line[6] << 8) | line[7];
-        //uso memcmp porque line no es una cadena terminada en \0. comparo byte a byte contra ID
+        // uso memcmp porque line no es una cadena terminada en \0. comparo byte a byte contra ID
         *res = (memcmp(line, ID, 5) == 0) && (line[5] == VERSION) && ((*code_size) <= N_MEM - 1);
 
-         // TEST: mostrar lectura
+        // TEST: mostrar lectura
         printf("IDENTIFICADOR: \"%.5s\"\n", line);
         printf("VERSION: %d\n", line[5]);
         printf("TAMANO EN BYTES: %u\n", *code_size);
-        
     }
     else
         *res = 0;
@@ -55,15 +54,29 @@ int main(int argc, char *argv[])
 {
     printf("%d \n", argc);
     printf("args: %s\n", *(argv + 1));
-    
-    uint16_t code_size;
-    int res = 0;
-    readHeader(*(argv + 1), &code_size, &res);
 
+    FILE *arch = fopen(*(argv + 1), "rb");
+    int8_t memory[N_MEM];
     // reg registers[N_REG];
-    // int segments[N_SEG];
-    // char memory[N_MEM];
+    // int32_t segments[N_SEG];
     // operatorASM operations[N_OP];
+    uint16_t code_size;
+    int8_t res = 0;
+
+    readHeader(*(argv + 1), &code_size, &res);
+    if (res)
+    {
+        fseek(arch, N_HEADER, SEEK_SET);
+
+        // aca faltaria inicializar CS
+        fread(memory, 1, code_size, arch);
+        fclose(arch);
+
+        for (int i = 0; i < code_size; i++)
+        {
+            printf("%02x \t", memory[i]);
+        }
+    }
 
     return 0;
 }
