@@ -50,11 +50,7 @@ void readHeader(char route[], uint16_t *code_size, int8_t *res)
     fclose(arch);
 }
 
-int main(int argc, char *argv[])
-{
-    printf("%d \n", argc);
-    printf("args: %s\n", *(argv + 1));
-
+void uploadMem(char *argv[]){
     FILE *arch = fopen(*(argv + 1), "rb");  //abre el archivo indicado por parametro
     int8_t memory[N_MEM];
     // reg registers[N_REG];
@@ -79,6 +75,12 @@ int main(int argc, char *argv[])
             printf("%02x \t", memory[i]);   //muestra toda la memoria
         }
     }
+}
+
+int main(int argc, char *argv[])
+{
+
+    uploadMem(argv);
 
     return 0;
 }
