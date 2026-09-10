@@ -55,26 +55,28 @@ int main(int argc, char *argv[])
     printf("%d \n", argc);
     printf("args: %s\n", *(argv + 1));
 
-    FILE *arch = fopen(*(argv + 1), "rb");
+    FILE *arch = fopen(*(argv + 1), "rb");  //abre el archivo indicado por parametro
     int8_t memory[N_MEM];
     // reg registers[N_REG];
     // int32_t segments[N_SEG];
     // operatorASM operations[N_OP];
-    uint16_t code_size;
-    int8_t res = 0;
+
+    uint16_t code_size; //guardamos el tamaño del code en una var de 2bytes
+    int8_t res = 0;     //guarda si es posible ejecutar el programa .vmx
 
     readHeader(*(argv + 1), &code_size, &res);
+
     if (res)
     {
         fseek(arch, N_HEADER, SEEK_SET);
 
         // aca faltaria inicializar CS
-        fread(memory, 1, code_size, arch);
+        fread(memory, 1, code_size, arch);  //guarda en memoria todo el code segment
         fclose(arch);
 
         for (int i = 0; i < code_size; i++)
         {
-            printf("%02x \t", memory[i]);
+            printf("%02x \t", memory[i]);   //muestra toda la memoria
         }
     }
 
